@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Print method used in UI thread
     void Print(String message){
-        text2.setText(text2.getText().toString() + message + "\n");
+        text2.setText(text2.getText().toString() + card1 + " " + card2 + "\n");
     }
 
     //Test method, use method SafePrint below if everything works
@@ -138,9 +138,6 @@ public class MainActivity extends AppCompatActivity {
 
         card1 = Integer.parseInt(data.get(0));
         card2 = Integer.parseInt(data.get(1));
-
-        PrintCard(card1);
-        PrintCard(card2);
         }
 
         /*client.SendData("Card 7\n");
@@ -149,20 +146,20 @@ public class MainActivity extends AppCompatActivity {
         client.LetServerRead();*/
 
 
-   public void PrintCard(int card) {
+    public static void PrintCard(int card) {
         int value_card = card % 13;
 
         if (card > 0 && card < 14) {
-            SafePrint("Hjärter " + value_card);
+            System.out.println("Hjärter " + value_card);
         }
         if (card > 13 && card < 27) {
-            SafePrint("Spader " + value_card);
+            System.out.println("Spader " + value_card);
         }
         if (card > 26 && card < 40) {
-            SafePrint("Klöver " + value_card);
+            System.out.println("Klöver " + value_card);
         }
         if (card > 39 && card < 53) {
-            SafePrint("Ruter " + value_card);
+            System.out.println("Ruter " + value_card);
         }
     }
 
