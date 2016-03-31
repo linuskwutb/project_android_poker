@@ -88,6 +88,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private TextView text2;
     Client client;
+    private int card1;
+    private int card2;
 
     Thread t;
 
@@ -134,14 +136,29 @@ public class MainActivity extends AppCompatActivity {
     void SendAndRecieveData(){
         List<String> data = client.RecieveData();
 
-        for (int i = 0; i < data.size(); i++) {
-            SafePrint(data.get(i));
+        card1 = Integer.parseInt(data.get(0));
+        card2 = Integer.parseInt(data.get(1));
+
+        PrintCard(card1);
+        PrintCard(card2);
         }
 
-        client.SendData("Card 7\n");
-        client.SendData("Card 8\n");
-        client.SendData("_endofdata_\n");
-        client.LetServerRead();
+
+   public void PrintCard(int card) {
+        int value_card = card % 13;
+
+        if (card > 0 && card < 14) {
+            SafePrint("Hjärter " + value_card);
+        }
+        if (card > 13 && card < 27) {
+            SafePrint("Spader " + value_card);
+        }
+        if (card > 26 && card < 40) {
+            SafePrint("Klöver " + value_card);
+        }
+        if (card > 39 && card < 53) {
+            SafePrint("Ruter " + value_card);
+        }
     }
 
     class CommunicationThread implements Runnable{
