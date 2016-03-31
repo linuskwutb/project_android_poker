@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         public void Start() {
             SetUp();
+            ShuffleDeck();
             if (server_socket != null) {
                 server.WaitForClient(20000);
             }
@@ -240,7 +241,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             public void run(){
-                ShuffleDeck();
                 try {
                     server_socket.setSoTimeout(timeout_);
                     Print("Waiting for client... (" + (float) timeout_ / 1000 + " s)");
@@ -256,8 +256,9 @@ public class MainActivity extends AppCompatActivity {
                                     new OutputStreamWriter(
                                             client_socket.getOutputStream())), false);
 
-                    SendAndRecieveData();
                     TableCards();
+
+                    SendAndRecieveData();
                 }
                 catch(SocketTimeoutException e) {
                     SafePrint("No client connected... closing server...");
