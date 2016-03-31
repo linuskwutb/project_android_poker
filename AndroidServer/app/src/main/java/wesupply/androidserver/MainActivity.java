@@ -190,8 +190,6 @@ public class MainActivity extends AppCompatActivity {
 
         //Used in CommunicationThread
         void SendAndRecieveData(){
-            ShuffleDeck();
-
             int card1 = Cards[0];
             int card2 = Cards[1];
 
@@ -242,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             public void run(){
+                ShuffleDeck();
                 try {
                     server_socket.setSoTimeout(timeout_);
                     Print("Waiting for client... (" + (float) timeout_ / 1000 + " s)");
@@ -257,9 +256,8 @@ public class MainActivity extends AppCompatActivity {
                                     new OutputStreamWriter(
                                             client_socket.getOutputStream())), false);
 
-                    TableCards();
-
                     SendAndRecieveData();
+                    TableCards();
                 }
                 catch(SocketTimeoutException e) {
                     SafePrint("No client connected... closing server...");
