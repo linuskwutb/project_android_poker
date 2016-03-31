@@ -23,6 +23,24 @@ public class MainActivity extends AppCompatActivity {
     private TextView text;
     private Server server;
     Thread t;
+    static int Cards[] =  {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,
+            33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52};
+    private int TableCard1;
+    private int TableCard2;
+    private int TableCard3;
+    private int TableCard4;
+    private int TableCard5;
+
+    public static void ShuffleDeck(){
+
+        for (int i = 0; i < 10000; ++i){
+            int k = (int) (Math.random()*52);
+            int l = (int) (Math.random()*52);
+            int temp = Cards[k];
+            Cards[k] = Cards[l];
+            Cards[l] = temp;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,8 +190,13 @@ public class MainActivity extends AppCompatActivity {
 
         //Used in CommunicationThread
         void SendAndRecieveData(){
-            server.SendData("Card 1\n");
-            server.SendData("Card 2\n");
+            ShuffleDeck();
+
+            int card1 = Cards[0];
+            int card2 = Cards[1];
+
+            server.SendData(card1 + "\n");
+            server.SendData(card2 + "\n");
             server.SendData("_endofdata_\n");
             server.LetClientRead();
 
@@ -183,6 +206,33 @@ public class MainActivity extends AppCompatActivity {
                 //Print(data.get(i));
                 SafePrint(text.getText().toString() + data.get(i) + "\n");
             }
+        }
+
+        public void PrintCard(int card) {
+            int value_card = card % 13;
+
+            if (card > 0 && card < 14) {
+                SafePrint("Hjärter " + value_card);
+            }
+            if (card > 13 && card < 27) {
+                SafePrint("Spader " + value_card);
+            }
+            if (card > 26 && card < 40) {
+                SafePrint("Klöver " + value_card);
+            }
+            if (card > 39 && card < 53) {
+                SafePrint("Ruter " + value_card);
+            }
+        }
+
+        public void TableCards(){
+            TableCard1 = Cards[5];
+            TableCard2 = Cards[6];
+            TableCard3 = Cards[7];
+
+            PrintCard(TableCard1);
+            PrintCard(TableCard2);
+            PrintCard(TableCard3);
         }
 
         class CommunicationThread implements Runnable{
@@ -206,6 +256,8 @@ public class MainActivity extends AppCompatActivity {
                             new BufferedWriter(
                                     new OutputStreamWriter(
                                             client_socket.getOutputStream())), false);
+
+                    TableCards();
 
                     SendAndRecieveData();
                 }
