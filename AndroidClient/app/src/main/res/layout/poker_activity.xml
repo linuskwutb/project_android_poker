@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <Button
+        android:layout_width="374dp"
+        android:layout_height="67dp"
+        android:text="Raise"
+        android:id="@+id/raiseButton"
+        android:layout_x="5dp"
+        android:layout_y="441dp" />
+
+    <Button
+        android:layout_width="374dp"
+        android:layout_height="67dp"
+        android:text="Check"
+        android:id="@+id/checkButton"
+        android:layout_x="5dp"
+        android:layout_y="380dp" />
+
+    <Button
+        android:layout_width="185dp"
+        android:layout_height="67dp"
+        android:text="Fold"
+        android:id="@+id/foldButton"
+        android:layout_x="195dp"
+        android:layout_y="316dp" />
+
+    <Button
+        android:layout_width="185dp"
+        android:layout_height="67dp"
+        android:text="Call"
+        android:id="@+id/callButton"
+        android:layout_x="5dp"
+        android:layout_y="316dp" />
+
+    <TextView
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/clientcard1id"
+        android:layout_x="110dp"
+        android:layout_y="49dp" />
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/clientratingBar"
+        android:layout_x="73dp"
+        android:layout_y="259dp" />
+
+    <TextView
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/clientcard2id"
+        android:layout_x="231dp"
+        android:layout_y="49dp" />
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/nicknameTxtviewid"
+        android:layout_x="14dp"
+        android:layout_y="8dp" />
+
+</AbsoluteLayout>
