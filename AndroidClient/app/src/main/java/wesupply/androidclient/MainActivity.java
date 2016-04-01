@@ -72,6 +72,8 @@ package wesupply.androidclient;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -85,11 +87,15 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
-    private TextView text2;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private TextView clientcard1id;
+    private TextView clientcard2id;
+    private Button checkButton;
     Client client;
     private int card1;
     private int card2;
+    String ready = null;
+
 
     Thread t;
 
@@ -98,9 +104,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        client = new Client("192.168.43.158", 5500);
+        client = new Client("192.168.43.74", 5500);
 
-        text2 = (TextView) findViewById(R.id.text);
+        clientcard1id = (TextView) findViewById(R.id.clientcard1id);
+        clientcard2id = (TextView) findViewById(R.id.clientcard2id);
+
+        checkButton = (Button) findViewById(R.id.checkButton);
+
+        checkButton.setOnClickListener(this);
 
         t = new Thread(new CommunicationThread());
         t.start();
@@ -108,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Print method used in UI thread
     void Print(String message){
-        text2.setText(text2.getText().toString() + message + "\n");
+        clientcard1id.setText(clientcard1id.getText().toString() + message + "\n");
     }
 
     //Test method, use method SafePrint below if everything works
@@ -121,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     //Print method DO NOT USE in ui thread
     //Thread safe print method
     void SafePrint(String out_text) {
-        text2.post(new Printer(out_text));
+        clientcard1id.post(new Printer(out_text));
     }
 
     class Printer implements Runnable{
@@ -129,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         Printer(String text){out_text = text;}
 
         public void run(){
-            text2.setText(text2.getText().toString() + out_text + "\n");
+            clientcard1id.setText(clientcard1id.getText().toString() + out_text + "\n");
         }
     }
 
@@ -147,19 +158,37 @@ public class MainActivity extends AppCompatActivity {
    public void PrintCard(int card) {
         int value_card = card % 13;
 
+       if (value_card == 0){
+           value_card = 13;
+       }
+
         if (card > 0 && card < 14) {
-            SafePrint("Hjärter " + value_card);
+            SafePrint("♥ " + value_card);
         }
         if (card > 13 && card < 27) {
-            SafePrint("Spader " + value_card);
+            SafePrint("♠ " + value_card);
         }
         if (card > 26 && card < 40) {
-            SafePrint("Klöver " + value_card);
+            SafePrint("♣ " + value_card);
         }
         if (card > 39 && card < 53) {
-            SafePrint("Ruter " + value_card);
+            SafePrint("♦ " + value_card);
         }
     }
+
+    public void onClick(View poker){
+
+        switch(poker.getId()){
+
+            case R.id.checkButton:
+                ready = "client1rdy\n";
+                client.SendData(ready);
+                client.LetServerRead();
+                clientcard2id.setText(clientcard2id.getText()+"Test\n");
+
+        }
+    }
+
 
     class CommunicationThread implements Runnable{
         public void run(){
@@ -218,15 +247,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        public <T> void SendData(T data) {
-            SafePrint("Client -> Server");
+        public void SendData(String ready) {
             try {
                 if (output != null){
-                    output.print(data);
+                    output.print(ready);
                 }
             }
             catch (Exception e) {
-                SafePrint(text2.getText() + (e.getMessage()));
+                SafePrint(clientcard1id.getText() + (e.getMessage()));
             }
         }
 

@@ -23,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView text;
     private Server server;
     Thread t;
+
+    int counter = 8;
+    String ready;
     static int Cards[] =  {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,
             33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52};
     private int TableCard1;
@@ -74,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         public void Start() {
             SetUp();
+            ShuffleDeck();
             if (server_socket != null) {
                 server.WaitForClient(20000);
             }
@@ -111,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         public <T> void SendData(T data)
         {
             try {
-                SafePrint("Server -> Client");
+                //SafePrint("Server -> Client");
                 output.print(data);
             }
             catch(Exception e) {
@@ -124,28 +128,26 @@ public class MainActivity extends AppCompatActivity {
             output.flush();
         }
 
-        // Used in CommunicationThread
-        public List<String> RecieveData()
-        {
-            List<String> data_list = new ArrayList<String>();
-            try {
-                SafePrint("Server <- Client");
+        public void NextCard() {
 
-                String data = "";
+        }
+        // Used in CommunicationThread
+        public void RecieveData()
+        {
+            try {
+               // SafePrint("Server <- Client");
+
+                ready = "";
 
                 if (input != null){
-                    data = input.readLine();
-                    while (data.compareTo("_endofdata_") != 0) {
-                        data_list.add(data);
-                        data = input.readLine();
-                    }
+                    ready = input.readLine();
+                    //SafePrint(ready);
                 }
             }
             catch(Exception e) {
                 SafePrint(e.getMessage());
             }
 
-            return data_list;
         }
 
         public void Close(){
@@ -198,28 +200,23 @@ public class MainActivity extends AppCompatActivity {
             server.SendData("_endofdata_\n");
             server.LetClientRead();
 
-            List<String> data = server.RecieveData();
 
-            for (int i = 0; i < data.size(); i++) {
-                //Print(data.get(i));
-                SafePrint(text.getText().toString() + data.get(i) + "\n");
-            }
         }
 
         public void PrintCard(int card) {
             int value_card = card % 13;
 
             if (card > 0 && card < 14) {
-                SafePrint("Hjärter " + value_card);
+                SafePrint("♥ " + value_card);
             }
             if (card > 13 && card < 27) {
-                SafePrint("Spader " + value_card);
+                SafePrint("♠ " + value_card);
             }
             if (card > 26 && card < 40) {
-                SafePrint("Klöver " + value_card);
+                SafePrint("♣ " + value_card);
             }
             if (card > 39 && card < 53) {
-                SafePrint("Ruter " + value_card);
+                SafePrint("♦ " + value_card);
             }
         }
 
@@ -233,14 +230,29 @@ public class MainActivity extends AppCompatActivity {
             PrintCard(TableCard3);
         }
 
+        public void TableCardsTurn(){
+            SafePrint("" + counter);
+            if (ready.compareTo("client1rdy") == 0 && counter == 8)   {
+
+                TableCard4 = Cards[counter++];
+
+                PrintCard(TableCard4);
+            }
+
+            else if (ready.compareTo("client1rdy") == 0 && counter == 9){
+                TableCard5 = Cards[counter++];
+
+                PrintCard(TableCard5);
+            }
+        }
+
         class CommunicationThread implements Runnable{
             int timeout_;
             public CommunicationThread(int timeout) {
                 timeout_ = timeout;
             }
 
-            public void run(){
-                ShuffleDeck();
+            public void run() {
                 try {
                     server_socket.setSoTimeout(timeout_);
                     Print("Waiting for client... (" + (float) timeout_ / 1000 + " s)");
@@ -256,8 +268,13 @@ public class MainActivity extends AppCompatActivity {
                                     new OutputStreamWriter(
                                             client_socket.getOutputStream())), false);
 
-                    SendAndRecieveData();
                     TableCards();
+
+                    SendAndRecieveData();
+                    RecieveData();
+                    TableCardsTurn();
+                    RecieveData();
+                    TableCardsTurn();
                 }
                 catch(SocketTimeoutException e) {
                     SafePrint("No client connected... closing server...");
